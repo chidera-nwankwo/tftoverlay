@@ -1,0 +1,13 @@
+{
+  "name": "tftoverlay",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/api": "^1.5.3",
+    "@tauri-apps/cli": "^1"
+  }
+}
