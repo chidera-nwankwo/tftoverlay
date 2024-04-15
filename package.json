@@ -1,13 +1,19 @@
 {
   "name": "tftoverlay",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "productName": "tftoverlay",
+  "version": "1.0.0",
+  "description": "tftoverlay for match history tracking",
+  "main": "main.js",
   "scripts": {
-    "tauri": "tauri"
+    "start": "electron ."
   },
+  "author": "Chidera Nwankwo",
+  "license": "MIT",
   "devDependencies": {
-    "@tauri-apps/api": "^1.5.3",
-    "@tauri-apps/cli": "^1"
+    "electron": "^29.3.0"
+  },
+  "dependencies": {
+    "resize-img": "^2.0.0",
+    "toastify-js": "^1.12.0"
   }
 }
