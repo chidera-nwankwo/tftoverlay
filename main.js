@@ -11,7 +11,7 @@ function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: 'tftoverlay',
         width: isDev ? 1000 : 500,
-        height: 600
+        height: 300
     });
 
     // Open devtools if in dev env
@@ -21,6 +21,27 @@ function createMainWindow() {
 
 
     mainWindow.loadFile(path.join(__dirname,'./renderer/index.html'));
+}
+
+// Create about window
+function createAboutWindow() {
+    const aboutWindow = new BrowserWindow({
+        title: 'About tftoverlay',
+        width: 300,
+        height: 300
+    });
+
+    aboutWindow.loadFile(path.join(__dirname,'./renderer/about.html'));
+}
+
+function createSummonerForm() {
+    const summonerWindow = new BrowserWindow({
+        title: 'Summoner Details',
+        width: isDev ? 1000 : 500,
+        height: 300
+});
+
+    summonerWindow.loadFile(path.join(__dirname,'./renderer/summoner.html'));
 }
 
 // App is ready
@@ -40,9 +61,28 @@ app.whenReady().then(() => {
 
 //Menu template
 const menu = [
+    ...(isMac ? [{
+        label: app.name,
+        submenu: [
+            {
+                label: 'About',
+                click: createAboutWindow
+            }
+        ]
+    }] : []),
+
+
     {
         role: 'fileMenu',
     },
+    ...(!isMac ? [{
+        label:'Help',
+        submenu: [{
+            label: 'About',
+            click: createAboutWindow
+        }]
+    }] : [])
+
 ];
 
 app.on('window-all-closed', () => {

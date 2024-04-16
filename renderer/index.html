@@ -3,9 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
+    <script src="js/renderer.js" defer></script>
     <title>tftoverlay</title>
 </head>
 <body>
-    <h1>Hello World!</h1>
+
+    <form id="summonerForm">
+        <label for="summonerName"> Summoner Name:</label><br>
+        <input type="text" id="summonerName" name="summonerName"><br>
+        <label for="tagLine"> Riot Tag:</label><br>
+        <input type="text" id="tagLine" name="tagLine"><br>
+        <input type="submit" value="Submit">
+    </form>
 </body>
 </html>
