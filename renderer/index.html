@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self'">
-    <script src="js/renderer.js" defer></script>
+    <link href="./output.css" rel="stylesheet">
+    <script src="./renderer.js" defer></script>
     <title>tftoverlay</title>
 </head>
 <body>
@@ -14,7 +15,16 @@
         <input type="text" id="summonerName" name="summonerName"><br>
         <label for="tagLine"> Riot Tag:</label><br>
         <input type="text" id="tagLine" name="tagLine"><br>
-        <input type="submit" value="Submit">
+
+        <label for="'region"> Choose your region:</label>
+        <select id="region" name="region">
+            <option value=""></option>
+            <option value="Americas">Americas</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="SEA">SEA</option>
+        </select><br><br>
+        <input type="submit" value="Submit" id="submit">
     </form>
 </body>
 </html>

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu} = require('electron');
 const path = require('path');
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -11,7 +11,13 @@ function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: 'tftoverlay',
         width: isDev ? 1000 : 500,
-        height: 300
+        height: 300,
+        webPreferences: {
+            contextIsolation: true,
+            nodeIntegration: true,
+            preload: path.join(__dirname,'preload.js'),
+            sandbox: false,
+        }
     });
 
     // Open devtools if in dev env
