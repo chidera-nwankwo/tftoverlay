@@ -16,7 +16,6 @@
     "aws-sdk": "^2.1600.0",
     "node-fetch": "^2.7.0",
     "node-fetch-commonjs": "^3.3.2",
-    "resize-img": "^2.0.0",
     "toastify-js": "^1.12.0"
   }
 }
