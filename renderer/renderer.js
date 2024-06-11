@@ -20,7 +20,25 @@ async function fetchMatches(puuid, region) {
     return parsedMatches;
 }
 
-// fetches match details (placement)
+// fetches outdated summonerID first bc riotgames sucks, then fetches tft ranked stats
+async function fetchRankStats() {
+    let summonerID = "w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg"
+
+    const response = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID);
+    const data = await response.json();
+
+    let queueType = data.body[0].queueType;
+    let tier = data.body[0].tier;
+    let division = data.body[0].rank;
+    let LP = data.body[0].leaguePoints;
+
+    console.log(queueType, tier, division, LP);
+
+    return queueType, tier, division, LP;
+    
+}
+
+// fetches specific match details
 async function fetchMatchDetails(matchIDArray, region, puuid) {
 
     let placementArray = [];
@@ -52,14 +70,16 @@ document.querySelector('form').addEventListener('submit', function(event) {
     var riotTagLine = document.getElementById('tagLine').value;
     var region = document.getElementById('region').value;
 
-    //console.log(summonerName, riotTagLine, region);
+    console.log(summonerName, riotTagLine, region);
+
+    fetchRankStats()
 
     // chaining promises so the functions execute in order
-    fetchPuuid(summonerName, riotTagLine, region)
+    /*fetchPuuid(summonerName, riotTagLine, region)
         .then((puuid) => fetchMatches(puuid,region)
         .then((matchhistory) => fetchMatchDetails(matchhistory, region, puuid)))
         .then((placementArray) => {
             console.log('placement: ' + placementArray);
-        })
+        })*/
     
 });
