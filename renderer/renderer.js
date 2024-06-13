@@ -9,28 +9,22 @@ async function fetchPuuid(summonerName, riotTagLine, region) {
     return puuid;
 }
 
-// fetches match history ID ONLY
-async function fetchMatches(puuid, region) {
-
-    const response = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches?region=' + region + '&puuid=' + puuid);
-    const data = await response.json();
-    
-    let parsedMatches = data.body;
-    //console.log(parsedMatches);
-    return parsedMatches;
-}
-
 // fetches outdated summonerID first bc riotgames sucks, then fetches tft ranked stats
-async function fetchRankStats() {
-    let summonerID = "w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg"
+async function fetchRankStats(puuid) {
+    const responseSummonerID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/summonerID?puuid=' + puuid)
+    const dataSummonerID = await responseSummonerID.json();
+    //let summonerID = "w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg"
 
-    const response = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID);
-    const data = await response.json();
+    let summonerID = dataSummonerID.body.id;
+    console.log(dataSummonerID);
 
-    let queueType = data.body[0].queueType;
-    let tier = data.body[0].tier;
-    let division = data.body[0].rank;
-    let LP = data.body[0].leaguePoints;
+    const responseRankStats = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID);
+    const dataRankStats = await responseRankStats.json();
+
+    let queueType = dataRankStats.body[0].queueType;
+    let tier = dataRankStats.body[0].tier;
+    let division = dataRankStats.body[0].rank;
+    let LP = dataRankStats.body[0].leaguePoints;
 
     console.log(queueType, tier, division, LP);
 
@@ -38,25 +32,36 @@ async function fetchRankStats() {
     
 }
 
-// fetches specific match details
-async function fetchMatchDetails(matchIDArray, region, puuid) {
+// fetches specific match details using match IDs
+async function fetchMatchDetails(region, puuid) {
+
+    // fetch match IDs
+    const responseMatchID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches?region=' + region + '&puuid=' + puuid);
+    const dataMatchID = await responseMatchID.json();
+    
+    let matchIDArray = dataMatchID.body;
 
     let placementArray = [];
+    let average = 0;
 
+    // iterate through match IDs for placement 
     for (let i=0; i< 20; i++) {
-        const response = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches/details?matchID=' + matchIDArray[i] + '&region=' + region);
-        const data = await response.json();
+        const responseMatchDetails = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches/details?matchID=' + matchIDArray[i] + '&region=' + region);
+        const dataMatchDetails = await responseMatchDetails.json();
         
         // return the index of the current user
-        let participants = data.body.metadata.participants;
+        let participants = dataMatchDetails.body.metadata.participants;
         let index = participants.indexOf(puuid);
     
-        let placement = data.body.info.participants[index].placement;
+        let placement = dataMatchDetails.body.info.participants[index].placement;
 
-        placementArray.push(placement)
+        placementArray.push(placement);
+        average += placement;
 
     }
 
+    average = average/20;
+    console.log('avg: '+ average);
     return placementArray;
 }
 
@@ -72,7 +77,8 @@ document.querySelector('form').addEventListener('submit', function(event) {
 
     console.log(summonerName, riotTagLine, region);
 
-    fetchRankStats()
+
+    fetchPuuid(summonerName,riotTagLine,region).then(puuid => fetchMatchDetails(region,puuid)).then(placementArray => {console.log('placement: ' + placementArray);})
 
     // chaining promises so the functions execute in order
     /*fetchPuuid(summonerName, riotTagLine, region)
