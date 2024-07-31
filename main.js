@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu} = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
 
 const isDev = process.env.NODE_ENV !== 'production';
@@ -10,23 +10,42 @@ const isMac = process.platform === 'darwin';
 function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: 'tftoverlay',
-        width: isDev ? 1000 : 500,
-        height: 300,
+        width: 500,
+        height: 200,
+        transparent: true,
+        frame: false,
+        focusable: true,
+        backgroundColor: '#00000000',
+        icon: path.join(__dirname,'assets/jinx_circle_38.png'),
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: true,
             preload: path.join(__dirname,'preload.js'),
             sandbox: false,
+            //devTools: false,
         }
     });
 
     // Open devtools if in dev env
     if (isDev) {
-        mainWindow.webContents.openDevTools();
+        mainWindow.webContents.openDevTools({mode: 'detach'});
     }
 
 
     mainWindow.loadFile(path.join(__dirname,'./renderer/index.html'));
+    mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+    isalways = mainWindow.setAlwaysOnTop(false,'screen-saver');
+    
+    ipcMain.on('close', () => {
+        if (!isMac) {
+            app.quit()
+          }
+    })
+
+    ipcMain.on('setpin', () => {
+        const isAlwaysOnTop = mainWindow.isAlwaysOnTop();
+        mainWindow.setAlwaysOnTop(!isAlwaysOnTop,'screen-saver');
+    })
 }
 
 // Create about window

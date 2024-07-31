@@ -10,7 +10,8 @@
   "author": "Chidera Nwankwo",
   "license": "MIT",
   "devDependencies": {
-    "electron": "^29.3.0"
+    "electron": "^29.3.0",
+    "tailwindcss": "^3.4.7"
   },
   "dependencies": {
     "aws-sdk": "^2.1600.0",

@@ -1,4 +1,4 @@
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 const https = require('https');
 const { net } = require('electron');
 const fetch = require('node-fetch-commonjs')
@@ -19,4 +19,9 @@ contextBridge.exposeInMainWorld('nodefetch', {
 
 contextBridge.exposeInMainWorld('DBClient', {
     connect: (...args) => Client.connect(...args),
-})
+});
+
+contextBridge.exposeInMainWorld('electron', {
+    minimizeWin: () => ipcRenderer.send('close'),
+    setPin: (...args) => ipcRenderer.send('setpin'),
+});

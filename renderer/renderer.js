@@ -1,3 +1,5 @@
+
+
 //fetches puuid
 async function fetchPuuid(summonerName, riotTagLine, region) {
 
@@ -64,6 +66,23 @@ async function fetchMatchDetails(region, puuid) {
     console.log('avg: '+ average);
     return placementArray;
 }
+
+async function writeDB(bundle) {
+    /*let bundle = {
+        puuid = ,
+        summonerID = ,
+        region = ,
+        gameName = ,
+    }*/
+}
+
+document.getElementById('minimize-icon').addEventListener('click', () => {
+    electron.minimizeWin()
+})
+
+document.getElementById('on-top-icon').addEventListener('click', () => {
+    electron.setPin('setpin', true)
+} )
 
 // gets user input for summoner name and riot tag and region
 document.querySelector('form').addEventListener('submit', function(event) {
