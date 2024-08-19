@@ -10,8 +10,10 @@ const isMac = process.platform === 'darwin';
 function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: 'tftoverlay',
-        width: 500,
-        height: 200,
+        maxWidth: 500,
+        maxHeight: 200,
+        minHeight: 200,
+        minWidth: 500,
         transparent: true,
         frame: false,
         focusable: true,

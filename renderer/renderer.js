@@ -1,3 +1,49 @@
+class SummonerInfo {
+    constructor(puuid, summonerID, region, gameName) {
+        this.puuid = puuid;
+        this.summonerID = summonerID;
+        this.region = region;
+        this.gameName = gameName;
+        this.queueType
+        this.tier
+        this.LP
+        this.division
+        this.matchHistory = []
+    }
+
+    async updateRankInfo() {
+        let { queueType, tier, division, LP } = await fetchRankStats(this.puuid);
+        this.queueType = queueType;
+        this.tier = tier;
+        this.division = division;
+        this.LP = LP;
+        
+    }
+
+    async updateMatchHistory() {
+        let placementArray = await fetchMatchDetails(this.region, this.puuid);
+        this.matchHistory = placementArray;
+    }
+
+    
+    
+}
+
+document.getElementById('refresh-icon').addEventListener('click', async () => {
+    let puuid = await fetchPuuid('Chadera', 'Based', 'americas')
+    let summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
+    //let { queueType, tier, division, LP } = await fetchRankStats(puuid)
+    //console.log(queueType, tier, division, LP)
+    await summoner.updateRankInfo()
+    await summoner.updateMatchHistory()
+
+    document.getElementById('root').innerHTML = `
+        Summoner Name: ${summoner.gameName}<br>
+        Queue Type: ${summoner.queueType}<br>
+        Rank: ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
+        Placement: ${summoner.matchHistory}
+    `;
+})
 
 
 //fetches puuid
@@ -18,7 +64,7 @@ async function fetchRankStats(puuid) {
     //let summonerID = "w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg"
 
     let summonerID = dataSummonerID.body.id;
-    console.log(dataSummonerID);
+    //console.log(dataSummonerID);
 
     const responseRankStats = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID);
     const dataRankStats = await responseRankStats.json();
@@ -28,9 +74,9 @@ async function fetchRankStats(puuid) {
     let division = dataRankStats.body[0].rank;
     let LP = dataRankStats.body[0].leaguePoints;
 
-    console.log(queueType, tier, division, LP);
+    //console.log(queueType, tier, division, LP);
 
-    return queueType, tier, division, LP;
+    return {queueType, tier, division, LP};
     
 }
 
@@ -76,7 +122,7 @@ async function writeDB(bundle) {
     }*/
 }
 
-document.getElementById('minimize-icon').addEventListener('click', () => {
+document.getElementById('close-icon').addEventListener('click', () => {
     electron.minimizeWin()
 })
 
