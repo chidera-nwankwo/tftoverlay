@@ -1,3 +1,5 @@
+
+// Object defining the user
 class SummonerInfo {
     constructor(puuid, summonerID, region, gameName) {
         this.puuid = puuid;
@@ -23,28 +25,12 @@ class SummonerInfo {
     async updateMatchHistory() {
         let placementArray = await fetchMatchDetails(this.region, this.puuid);
         this.matchHistory = placementArray;
+        
     }
 
-    
-    
 }
 
-document.getElementById('refresh-icon').addEventListener('click', async () => {
-    let puuid = await fetchPuuid('Chadera', 'Based', 'americas')
-    let summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
-    //let { queueType, tier, division, LP } = await fetchRankStats(puuid)
-    //console.log(queueType, tier, division, LP)
-    await summoner.updateRankInfo()
-    await summoner.updateMatchHistory()
-
-    document.getElementById('root').innerHTML = `
-        Summoner Name: ${summoner.gameName}<br>
-        Queue Type: ${summoner.queueType}<br>
-        Rank: ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
-        Placement: ${summoner.matchHistory}
-    `;
-})
-
+// ---------------- ASYNC FETCH FUNCTIONS ----------------
 
 //fetches puuid
 async function fetchPuuid(summonerName, riotTagLine, region) {
@@ -113,44 +99,42 @@ async function fetchMatchDetails(region, puuid) {
     return placementArray;
 }
 
-async function writeDB(bundle) {
-    /*let bundle = {
-        puuid = ,
-        summonerID = ,
-        region = ,
-        gameName = ,
-    }*/
-}
+
+// ---------------- EVENT LISTENERS ----------------
 
 document.getElementById('close-icon').addEventListener('click', () => {
-    electron.minimizeWin()
+    electron.minimizeWin();
 })
 
 document.getElementById('on-top-icon').addEventListener('click', () => {
-    electron.setPin('setpin', true)
-} )
+    electron.setPin('setpin', true);
+});
 
-// gets user input for summoner name and riot tag and region
-document.querySelector('form').addEventListener('submit', function(event) {
-
-    // prevents reloading of console window upon form submit
-    event.preventDefault();
-
-    var summonerName = document.getElementById('summonerName').value;
-    var riotTagLine = document.getElementById('tagLine').value;
-    var region = document.getElementById('region').value;
-
-    console.log(summonerName, riotTagLine, region);
+document.getElementById('edit-icon').addEventListener('click', async () => {
+    document.getElementById('grid-layout').style.visibility = 'hidden';
 
 
-    fetchPuuid(summonerName,riotTagLine,region).then(puuid => fetchMatchDetails(region,puuid)).then(placementArray => {console.log('placement: ' + placementArray);})
+    //load user input element
+    //change create new summoner object
+    // set visibility = 'visible'
+});
 
-    // chaining promises so the functions execute in order
-    /*fetchPuuid(summonerName, riotTagLine, region)
-        .then((puuid) => fetchMatches(puuid,region)
-        .then((matchhistory) => fetchMatchDetails(matchhistory, region, puuid)))
-        .then((placementArray) => {
-            console.log('placement: ' + placementArray);
-        })*/
-    
+document.getElementById('refresh-icon').addEventListener('click', async () => {
+    let puuid = await fetchPuuid('Chadera', 'Based', 'americas');
+    let summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
+
+    await summoner.updateRankInfo();
+
+    document.getElementById('rank-details').innerHTML = `
+        Summoner Name: ${summoner.gameName}<br>
+        Queue Type: ${summoner.queueType}<br>
+        Rank: ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
+        Placement: ${summoner.matchHistory}
+    `;
+
+    document.getElementById('rank-image').innerHTML = `
+        <img src='../assets/rank_images/${summoner.tier}.png'>
+    `;
+
+    document.getElementById('grid-layout').style.visibility = 'visible';
 });

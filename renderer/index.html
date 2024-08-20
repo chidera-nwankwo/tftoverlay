@@ -11,6 +11,7 @@
             html, body {
                 background-color: transparent;
                 
+                
             }
 
             .root {
@@ -21,11 +22,14 @@
                 padding-top: 30px;
                 padding-left: 6px;
                 padding-right: 6px;
+                color: white;
+                
                 
             }
 
             .root:hover {
                 background-color: white;
+                color: black
             }
 
             .menu-bar {  
@@ -40,6 +44,7 @@
                 display: block;
                 text-indent: 10px;
                 line-height: 30px;
+                
                 
             }
 
@@ -107,6 +112,12 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
                       </svg>
                 </div>
+                <div id="edit-icon" class="menu-item">
+                    <svg class="menu-item" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                      </svg>
+                      
+                </div>
 
                   
             </div>
@@ -114,8 +125,20 @@
             
         </header>
 
-        <!-- root display-->
-        <div id="root" class="root">
+        <!-- root display -->
+        <div id="root" class="root rounded-b-sm">
+
+            <!-- grid display -->
+            <div id="grid-layout" class="grid grid-cols-3 p-2.5 h-40 gap-4">
+                <div id="rank-image" class=""></div>
+                <div id="rank-details" class="col-span-2 text-lg font-bold flex justify-center items-center"></div>
+            </div>
+
+
+            <!-- user details form -->
+             <div id="edit-user" style="visibility: hidden;">
+
+             </div>
         </div> 
     </body>
 
