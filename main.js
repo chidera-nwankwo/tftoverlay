@@ -10,6 +10,8 @@ const isMac = process.platform === 'darwin';
 function createMainWindow() {
     const mainWindow = new BrowserWindow({
         title: 'tftoverlay',
+        x: 0,
+        y:0,
         maxWidth: 500,
         maxHeight: 200,
         minHeight: 200,
@@ -28,15 +30,24 @@ function createMainWindow() {
         }
     });
 
+    
+
     // Open devtools if in dev env
     if (isDev) {
         mainWindow.webContents.openDevTools({mode: 'detach'});
     }
 
-
+    // loads html
     mainWindow.loadFile(path.join(__dirname,'./renderer/index.html'));
+
+    // sets the window ontop of everything in the display
     mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-    isalways = mainWindow.setAlwaysOnTop(false,'screen-saver');
+    mainWindow.setAlwaysOnTop(true, 'screen-saver', 1);
+
+    // communicates with the renderer that the app has loaded
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.webContents.send('start');
+    });
     
     ipcMain.on('close', () => {
         if (!isMac) {
@@ -48,36 +59,16 @@ function createMainWindow() {
         const isAlwaysOnTop = mainWindow.isAlwaysOnTop();
         mainWindow.setAlwaysOnTop(!isAlwaysOnTop,'screen-saver');
     })
-}
 
-// Create about window
-function createAboutWindow() {
-    const aboutWindow = new BrowserWindow({
-        title: 'About tftoverlay',
-        width: 300,
-        height: 300
-    });
 
-    aboutWindow.loadFile(path.join(__dirname,'./renderer/about.html'));
-}
 
-function createSummonerForm() {
-    const summonerWindow = new BrowserWindow({
-        title: 'Summoner Details',
-        width: isDev ? 1000 : 500,
-        height: 300
-});
-
-    summonerWindow.loadFile(path.join(__dirname,'./renderer/summoner.html'));
 }
 
 // App is ready
 app.whenReady().then(() => {
     createMainWindow();
+    
 
-    // Implement menu
-    const mainMenu = Menu.buildFromTemplate(menu);
-    Menu.setApplicationMenu(mainMenu)
 
     app.on('activate', () => {
         if (BrowserWindow.getAllWindows().length === 0) {
@@ -86,34 +77,9 @@ app.whenReady().then(() => {
     });
 });
 
-//Menu template
-const menu = [
-    ...(isMac ? [{
-        label: app.name,
-        submenu: [
-            {
-                label: 'About',
-                click: createAboutWindow
-            }
-        ]
-    }] : []),
-
-
-    {
-        role: 'fileMenu',
-    },
-    ...(!isMac ? [{
-        label:'Help',
-        submenu: [{
-            label: 'About',
-            click: createAboutWindow
-        }]
-    }] : [])
-
-];
 
 app.on('window-all-closed', () => {
     if (!isMac) {
       app.quit()
     }
-  })
+})

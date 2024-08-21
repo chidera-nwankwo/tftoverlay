@@ -1,3 +1,25 @@
+// Immediately looks for a previous user in localstorage and displays them
+electron.loadLocalStorage( async() => {
+    if(window.localStorage.getItem('user') != null) {
+        var summoner = new SummonerInfo;
+        summoner = JSON.parse(window.localStorage.getItem('user'))
+        
+        document.getElementById('rank-details').innerHTML = `
+            ${summoner.gameName}<br>
+            ${summoner.queueType}<br>
+            ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
+            Placement: ${summoner.matchHistory}
+        `;
+
+        document.getElementById('rank-image').innerHTML = `
+            <img src='../assets/rank_images/${summoner.tier}.png'>
+        `;
+
+    }
+
+    
+});
+
 
 // Object defining the user
 class SummonerInfo {
@@ -102,39 +124,71 @@ async function fetchMatchDetails(region, puuid) {
 
 // ---------------- EVENT LISTENERS ----------------
 
+
 document.getElementById('close-icon').addEventListener('click', () => {
     electron.minimizeWin();
 })
 
+// pin the window to always be on top
 document.getElementById('on-top-icon').addEventListener('click', () => {
-    electron.setPin('setpin', true);
+    electron.setPin('setpin');
 });
 
+// change user details
 document.getElementById('edit-icon').addEventListener('click', async () => {
-    document.getElementById('grid-layout').style.visibility = 'hidden';
-
-
+    localStorage.clear()
+    //document.getElementById('grid-layout').style.visibility = 'hidden';
+    
     //load user input element
     //change create new summoner object
     // set visibility = 'visible'
 });
 
+// refreshes rank data
 document.getElementById('refresh-icon').addEventListener('click', async () => {
-    let puuid = await fetchPuuid('Chadera', 'Based', 'americas');
-    let summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
+    if(localStorage.getItem('user') != null) {
 
+        let stored = JSON.parse(localStorage.getItem('user'))
+        var summoner = new SummonerInfo(
+            this.puuid = stored.puuid,
+            this.summonerID = stored.summonerID,
+            this.region = stored.region,
+            this.gameName = stored.gameName,
+            this.queueType = stored.queueType,
+            this.tier = stored.tier,
+            this.LP = stored.LP,
+            this.division = stored.division,
+            this.matchHistory = stored.matchHistory
+
+        )
+        
+        console.log(summoner)
+        console.log('user found: updating...')
+    }
+
+    else {
+        let puuid = await fetchPuuid('Chadera', 'Based', 'americas');
+        var summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
+        window.localStorage.setItem('user', JSON.stringify(summoner))
+        console.log('user not found: creating user...')
+    }
+    
     await summoner.updateRankInfo();
-
+    
     document.getElementById('rank-details').innerHTML = `
-        Summoner Name: ${summoner.gameName}<br>
-        Queue Type: ${summoner.queueType}<br>
-        Rank: ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
+        ${summoner.gameName}<br>
+        ${summoner.queueType}<br>
+        ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
         Placement: ${summoner.matchHistory}
     `;
-
+    
     document.getElementById('rank-image').innerHTML = `
         <img src='../assets/rank_images/${summoner.tier}.png'>
     `;
-
+    
     document.getElementById('grid-layout').style.visibility = 'visible';
+
+    window.localStorage.setItem('user', JSON.stringify(summoner))
+
+
 });
