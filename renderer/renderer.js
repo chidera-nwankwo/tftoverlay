@@ -1,8 +1,59 @@
+
+
+
+// ---------------- RENDERER INIT ----------------
+
+// Object defining the user
+class SummonerInfo {
+    constructor(puuid, summonerID, region, superRegion, gameName) {
+        this.puuid = puuid;
+        this.summonerID = summonerID;
+        this.region = region;
+        this.superRegion = superRegion
+        this.gameName = gameName;
+        this.queueType
+        this.tier
+        this.LP
+        this.division
+        this.matchHistory = []
+    }
+
+    async updateRankInfo() {
+        let { queueType, tier, division, LP } = await fetchRankStats(this.puuid, this.region);
+        this.queueType = queueType;
+        this.tier = tier;
+        this.division = division;
+        this.LP = LP;
+        console.log('Rank info updated')
+        
+    }
+
+    async updateMatchHistory() {
+        let placementArray = await fetchMatchDetails(this.superRegion, this.puuid);
+        this.matchHistory = placementArray;
+        
+    }
+
+    static fromStorage(obj) {
+        let instance = new SummonerInfo(obj.puuid, obj.summonerID, obj.region, obj.superRegion, obj.gameName);
+        instance.queueType = obj.queueType;
+        instance.tier = obj.tier;
+        instance.division = obj.division;
+        instance.LP = obj.LP;
+        instance.matchHistory = obj.matchHistory;
+        return instance;
+    }
+
+}
+
+
 // Immediately looks for a previous user in localstorage and displays them
 electron.loadLocalStorage( async() => {
     if(window.localStorage.getItem('user') != null) {
-        var summoner = new SummonerInfo;
-        summoner = JSON.parse(window.localStorage.getItem('user'))
+        var stored = JSON.parse(window.localStorage.getItem('user'))
+        var summoner = SummonerInfo.fromStorage(stored)
+        //console.log(summoner)
+        await summoner.updateRankInfo()
         
         document.getElementById('rank-details').innerHTML = `
             ${summoner.gameName}<br>
@@ -21,38 +72,21 @@ electron.loadLocalStorage( async() => {
 });
 
 
-// Object defining the user
-class SummonerInfo {
-    constructor(puuid, summonerID, region, gameName) {
-        this.puuid = puuid;
-        this.summonerID = summonerID;
-        this.region = region;
-        this.gameName = gameName;
-        this.queueType
-        this.tier
-        this.LP
-        this.division
-        this.matchHistory = []
-    }
 
-    async updateRankInfo() {
-        let { queueType, tier, division, LP } = await fetchRankStats(this.puuid);
-        this.queueType = queueType;
-        this.tier = tier;
-        this.division = division;
-        this.LP = LP;
-        
-    }
 
-    async updateMatchHistory() {
-        let placementArray = await fetchMatchDetails(this.region, this.puuid);
-        this.matchHistory = placementArray;
-        
-    }
 
-}
+
+
+
+
+
+
 
 // ---------------- ASYNC FETCH FUNCTIONS ----------------
+
+
+
+
 
 //fetches puuid
 async function fetchPuuid(summonerName, riotTagLine, region) {
@@ -66,15 +100,15 @@ async function fetchPuuid(summonerName, riotTagLine, region) {
 }
 
 // fetches outdated summonerID first bc riotgames sucks, then fetches tft ranked stats
-async function fetchRankStats(puuid) {
-    const responseSummonerID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/summonerID?puuid=' + puuid)
+async function fetchRankStats(puuid, region) {
+    const responseSummonerID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/summonerID?puuid=' + puuid + '&region=' + region)
     const dataSummonerID = await responseSummonerID.json();
     //let summonerID = "w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg"
 
     let summonerID = dataSummonerID.body.id;
     //console.log(dataSummonerID);
 
-    const responseRankStats = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID);
+    const responseRankStats = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/rank?summonerID=' + summonerID + '&region=' + region);
     const dataRankStats = await responseRankStats.json();
 
     let queueType = dataRankStats.body[0].queueType;
@@ -89,10 +123,10 @@ async function fetchRankStats(puuid) {
 }
 
 // fetches specific match details using match IDs
-async function fetchMatchDetails(region, puuid) {
+async function fetchMatchDetails(superRegion, puuid) {
 
     // fetch match IDs
-    const responseMatchID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches?region=' + region + '&puuid=' + puuid);
+    const responseMatchID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches?region=' + superRegion + '&puuid=' + puuid);
     const dataMatchID = await responseMatchID.json();
     
     let matchIDArray = dataMatchID.body;
@@ -102,7 +136,7 @@ async function fetchMatchDetails(region, puuid) {
 
     // iterate through match IDs for placement 
     for (let i=0; i< 20; i++) {
-        const responseMatchDetails = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches/details?matchID=' + matchIDArray[i] + '&region=' + region);
+        const responseMatchDetails = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/tft/matches/details?matchID=' + matchIDArray[i] + '&region=' + superRegion);
         const dataMatchDetails = await responseMatchDetails.json();
         
         // return the index of the current user
@@ -122,9 +156,20 @@ async function fetchMatchDetails(region, puuid) {
 }
 
 
+
+
+
+
+
+
 // ---------------- EVENT LISTENERS ----------------
 
 
+
+
+
+
+// exit app
 document.getElementById('close-icon').addEventListener('click', () => {
     electron.minimizeWin();
 })
@@ -134,46 +179,76 @@ document.getElementById('on-top-icon').addEventListener('click', () => {
     electron.setPin('setpin');
 });
 
-// change user details
-document.getElementById('edit-icon').addEventListener('click', async () => {
-    localStorage.clear()
-    //document.getElementById('grid-layout').style.visibility = 'hidden';
+// changes the page to the user submit form
+document.getElementById('edit-icon').addEventListener('click', () => {
+
+    document.getElementById('grid-layout').classList.add('hidden')
+    document.getElementById('edit-user').classList.remove('hidden')
     
-    //load user input element
-    //change create new summoner object
-    // set visibility = 'visible'
 });
 
-// refreshes rank data
-document.getElementById('refresh-icon').addEventListener('click', async () => {
-    if(localStorage.getItem('user') != null) {
+// Submits the user's summoner info and saves it
+document.getElementById('submit').addEventListener('click', async () => {
+    summonerName = document.getElementById('summonerName').value;
+    riotTag = document.getElementById('riotTag').value;
+    region = document.getElementById('region').value;
 
-        let stored = JSON.parse(localStorage.getItem('user'))
-        var summoner = new SummonerInfo(
-            this.puuid = stored.puuid,
-            this.summonerID = stored.summonerID,
-            this.region = stored.region,
-            this.gameName = stored.gameName,
-            this.queueType = stored.queueType,
-            this.tier = stored.tier,
-            this.LP = stored.LP,
-            this.division = stored.division,
-            this.matchHistory = stored.matchHistory
+    superRegion = document.querySelector("[value=" + region + "]").parentNode.label
 
-        )
-        
-        console.log(summoner)
-        console.log('user found: updating...')
+    if (!summonerName || !riotTag || !region) {
+        console.log('not complete')
+        //prompt user to finish fields
     }
 
     else {
-        let puuid = await fetchPuuid('Chadera', 'Based', 'americas');
-        var summoner = new SummonerInfo(puuid, 'w0_1WyDNk4q2SX-DqtOOj1Efwy7r8a_mBUGNwbGGdc8xIvg', 'americas', 'Chadera');
-        window.localStorage.setItem('user', JSON.stringify(summoner))
-        console.log('user not found: creating user...')
+        try {
+            
+            let puuid = await fetchPuuid(summonerName, riotTag, superRegion);
+            const responseSummonerID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/summonerID?puuid=' + puuid + '&region=' + region)
+            const dataSummonerID = await responseSummonerID.json();
+        
+            let summonerID = dataSummonerID.body.id;
+            summoner = new SummonerInfo(puuid, summonerID, region, superRegion, summonerName);
+            await summoner.updateRankInfo()
+
+            window.localStorage.setItem('user', JSON.stringify(summoner))
+
+            document.getElementById('rank-details').innerHTML = `
+                ${summoner.gameName}<br>
+                ${summoner.queueType}<br>
+                ${summoner.tier} ${summoner.division} ${summoner.LP} LP<br>
+                Placement: ${summoner.matchHistory}
+            `;
+        
+            document.getElementById('rank-image').innerHTML = `
+                <img src='../assets/rank_images/${summoner.tier}.png'>
+            `;
+
+            document.getElementById('edit-user').classList.add('hidden')
+            document.getElementById('grid-layout').classList.remove('hidden')
+
+            console.log('Summoner info updated.')
+
+        }
+
+        catch {
+            console.log('Summoner not found.')
+            
+        }
+    }
+})
+
+// refreshes rank data
+document.getElementById('refresh-icon').addEventListener('click', async () => {
+
+    var storedUser = JSON.parse(window.localStorage.getItem('user'));
+    
+    if (storedUser) {
+        var summoner = SummonerInfo.fromStorage(storedUser)
     }
     
     await summoner.updateRankInfo();
+    await summoner.updateMatchHistory();
     
     document.getElementById('rank-details').innerHTML = `
         ${summoner.gameName}<br>
@@ -185,10 +260,7 @@ document.getElementById('refresh-icon').addEventListener('click', async () => {
     document.getElementById('rank-image').innerHTML = `
         <img src='../assets/rank_images/${summoner.tier}.png'>
     `;
-    
-    document.getElementById('grid-layout').style.visibility = 'visible';
 
     window.localStorage.setItem('user', JSON.stringify(summoner))
-
-
+    
 });

@@ -3,6 +3,7 @@ const https = require('https');
 const { net } = require('electron');
 const fetch = require('node-fetch-commonjs')
 const { Client } = require('pg');
+const Toastify = require('toastify-js');
 
 contextBridge.exposeInMainWorld('electron', {
     minimizeWin: () => ipcRenderer.send('close'),
@@ -10,20 +11,10 @@ contextBridge.exposeInMainWorld('electron', {
     loadLocalStorage: (callback) => ipcRenderer.on('start', callback)
 });
 
-contextBridge.exposeInMainWorld('https', {
-    https: (...args) => https.request(...args),
-});
-
-contextBridge.exposeInMainWorld('net', {
-    request: (...args) => net.request(...args),
-});
-
 contextBridge.exposeInMainWorld('nodefetch', {
     fetch: (...args) => fetch(...args),
 });
 
-contextBridge.exposeInMainWorld('DBClient', {
-    connect: (...args) => Client.connect(...args),
-});
+
 
 

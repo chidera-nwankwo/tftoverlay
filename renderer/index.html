@@ -7,6 +7,7 @@
         <script src="./renderer.js" defer></script>
         <title>tftoverlay</title>
         <link href="output.css" rel="stylesheet">
+        
         <style>
             html, body {
                 background-color: transparent;
@@ -21,9 +22,7 @@
                 height: 100vh;
                 padding-top: 30px;
                 padding-left: 6px;
-                padding-right: 6px;
-                color: white;
-                
+                padding-right: 6px;    
                 
             }
 
@@ -61,6 +60,10 @@
             .menu-item:hover {
                 background-color: rgb(177, 213, 255);
                 color: black;
+            }
+
+            .menu-item:active {
+                background-color: aquamarine;
             }
 
             .summoner-item {
@@ -116,31 +119,73 @@
                     <svg class="menu-item" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" class="size-6">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
                       </svg>
-                      
                 </div>
-
-                  
-            </div>
-           
-            
+            </div> 
         </header>
 
+        
+
+        
+
         <!-- root display -->
-        <div id="root" class="root rounded-b-sm">
+        <div id="root" class="root rounded-b-sm">            
 
             <!-- grid display -->
-            <div id="grid-layout" class="grid grid-cols-3 p-2.5 h-40 gap-4">
+            <div id="grid-layout" class="grid grid-cols-3 p-2.5 h-40 gap-3">
                 <div id="rank-image" class="">No user data loaded</div>
-                <div id="rank-details" class="col-span-2 text-lg font-bold flex justify-center items-center"></div>
+                <div id="rank-details" class="col-span-2 text-lg font-bold flex justify-start items-center"></div>
             </div>
 
 
             <!-- user details form -->
-             <div id="edit-user" style="visibility: hidden;">
+            <div id="edit-user" class="grid grid-cols-2 p-2.5 h-40 gap-2 hidden">
 
-             </div>
-        </div> 
+                <div>
+                    <label for="SummonerName" class="block text-s text-black font-bold"> Summoner Name </label>
+                    <input type="text" id="summonerName" placeholder="ex. Chadera" class="mt-1 w-30 rounded-md border-gray-200 shadow-md sm:text-sm pl-2"/> 
+                </div>
+                
+                <div>
+                    <label for="riotTag" class="block text-s text-black font-bold"> RiotID Tag </label>
+                    <input type="text" id="riotTag" placeholder="ex. NA1" class="mt-1 w-full rounded-md border-gray-200 shadow-md sm:text-sm pl-2"/> 
+                </div>
+
+                <div>
+                    <label for="region" class="block text-s text-black font-bold"> Region </label>
+                    <select name="region" id="region" class="mt-1 w-30 rounded-md border-gray-200 shadow-md sm:text-sm px-2">
+                        <option value="">Select</option>
+                        <optgroup class="font-bold" label="Americas">
+                            <option value="NA1">NA</option>
+                            <option value="LA1">LAN</option>
+                            <option value="LA2">LAS</option>
+                        </optgroup>
+                        <optgroup class="font-bold" label="Europe">
+                            <option value="EUW1">EUW</option>
+                            <option value="EUN1">EUNE</option>
+                        </optgroup>
+                        <optgroup class="font-bold" label="SEA">
+                            <option value="OC1">OCE</option>
+                        </optgroup> 
+                    </select>
+                  </div>
+
+                  <div>
+                    <button id="submit" class="h-full w-full bg-gray-600 rounded-xl font-extrabold text-lg">Submit</button>
+                  </div>
+
+                
+            </div>
+
+             
+             
+             
+        </div>
+        
+        
+
     </body>
+
+    
 
     
 </html>
