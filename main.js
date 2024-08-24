@@ -20,7 +20,7 @@ function createMainWindow() {
         frame: false,
         focusable: true,
         backgroundColor: '#00000000',
-        icon: path.join(__dirname,'assets/jinx_circle_38.png'),
+        //icon: path.join(__dirname,'assets/jinx_circle_38.png'),
         webPreferences: {
             contextIsolation: true,
             nodeIntegration: true,

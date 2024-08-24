@@ -53,7 +53,7 @@ electron.loadLocalStorage( async() => {
         var stored = JSON.parse(window.localStorage.getItem('user'))
         var summoner = SummonerInfo.fromStorage(stored)
         //console.log(summoner)
-        await summoner.updateRankInfo()
+        //await summoner.updateRankInfo()
         
         document.getElementById('rank-details').innerHTML = `
             ${summoner.gameName}<br>
@@ -167,16 +167,16 @@ async function fetchMatchDetails(superRegion, puuid) {
 
 
 
-
-
 // exit app
 document.getElementById('close-icon').addEventListener('click', () => {
     electron.minimizeWin();
+
 })
 
 // pin the window to always be on top
 document.getElementById('on-top-icon').addEventListener('click', () => {
     electron.setPin('setpin');
+
 });
 
 // changes the page to the user submit form
@@ -192,8 +192,7 @@ document.getElementById('submit').addEventListener('click', async () => {
     summonerName = document.getElementById('summonerName').value;
     riotTag = document.getElementById('riotTag').value;
     region = document.getElementById('region').value;
-
-    superRegion = document.querySelector("[value=" + region + "]").parentNode.label
+    console.log(summonerName)
 
     if (!summonerName || !riotTag || !region) {
         console.log('not complete')
@@ -202,6 +201,8 @@ document.getElementById('submit').addEventListener('click', async () => {
 
     else {
         try {
+
+            superRegion = document.querySelector("[value=" + region + "]").parentNode.label
             
             let puuid = await fetchPuuid(summonerName, riotTag, superRegion);
             const responseSummonerID = await fetch('https://w49d8ezvz3.execute-api.us-east-2.amazonaws.com/rgapi/summoner/region/id/summonerID?puuid=' + puuid + '&region=' + region)
@@ -220,8 +221,17 @@ document.getElementById('submit').addEventListener('click', async () => {
                 Placement: ${summoner.matchHistory}
             `;
         
+            let imagePath;
+            if (electron.isPackaged) {
+                imagePath = path.join(process.resourcesPath, 'assets', 'rank_images', summoner.tier, '.png');
+            }
+
+            else {
+                imagePath = path.join(__dirname, 'assets/rank_images/', '' + summoner.tier + '.png')
+            }
+
             document.getElementById('rank-image').innerHTML = `
-                <img src='../assets/rank_images/${summoner.tier}.png'>
+                <img src='${imagePath}'>
             `;
 
             document.getElementById('edit-user').classList.add('hidden')
@@ -249,6 +259,7 @@ document.getElementById('refresh-icon').addEventListener('click', async () => {
     
     await summoner.updateRankInfo();
     await summoner.updateMatchHistory();
+
     
     document.getElementById('rank-details').innerHTML = `
         ${summoner.gameName}<br>
