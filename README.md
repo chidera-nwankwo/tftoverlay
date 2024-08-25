@@ -36,4 +36,6 @@ Application sends multiple requests to Riot Games' api through an AWS proxy (Puu
 - Run with `npx electronmon .`
 - Make a distributable version with `npm run make`
 
+## Credits
+[Riot Games API](https://developer.riotgames.com/apis)
 
