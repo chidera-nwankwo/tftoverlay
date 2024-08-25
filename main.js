@@ -33,7 +33,7 @@ function createMainWindow() {
     
 
     // Open devtools if in dev env
-    if (isDev) {
+    if (!app.isPackaged) {
         mainWindow.webContents.openDevTools({mode: 'detach'});
     }
 
@@ -56,6 +56,7 @@ function createMainWindow() {
     })
 
     ipcMain.on('setpin', () => {
+        
         const isAlwaysOnTop = mainWindow.isAlwaysOnTop();
         mainWindow.setAlwaysOnTop(!isAlwaysOnTop,'screen-saver');
     })

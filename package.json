@@ -9,7 +9,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make"
   },
-  "author": "Chidera Nwankwo",
+  "author": "Chadera",
   "license": "MIT",
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
@@ -32,8 +32,4 @@
     "react-toastify": "^10.0.5",
     "toastify-js": "^1.12.0"
   }
-
-
-
-
 }
