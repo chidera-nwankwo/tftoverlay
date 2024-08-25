@@ -13,15 +13,22 @@
 - [Contact](#contact)
 
 ## Installation
-
-## Usage
-
-## Features
+- Go to [Releases](https://github.com/chidera-nwankwo/tftoverlay/releases)
+- Download the latest .7z and extract it
 
 ## Screenshots
 
-## Contributing
+### Rank Overlay 
 
-## License
+### Summoner Search
 
-## Contact
+### Overlay In-Game
+
+## How it Works
+
+## For Developers
+- Install Npm dependancies with `npm install`
+- Rebuild output.css with `npx tailwindcss -i ./renderer/input.css -o ./renderer/output.css --watch`
+- Run with `npx electronmon .`
+
+
