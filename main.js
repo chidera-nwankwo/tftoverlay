@@ -1,10 +1,11 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('path');
-
 const isDev = process.env.NODE_ENV !== 'production';
 const isMac = process.platform === 'darwin';
 
 
+const { updateElectronApp, UpdateSourceType } = require('update-electron-app')
+updateElectronApp()
 
 // Creating Main Window
 function createMainWindow() {
@@ -52,11 +53,12 @@ function createMainWindow() {
     ipcMain.on('close', () => {
         if (!isMac) {
             app.quit()
+            ipcMain.removeAllListeners();
           }
     })
 
     ipcMain.on('setpin', () => {
-        
+
         const isAlwaysOnTop = mainWindow.isAlwaysOnTop();
         mainWindow.setAlwaysOnTop(!isAlwaysOnTop,'screen-saver');
     })
