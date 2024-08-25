@@ -1,6 +1,6 @@
 # tftoverlay [WIP]
 
-> A transparent overlay for Teamfight Tactics that tracks recent placements and current rank. Inspired by [tracker.gg](https://tracker.gg/overlays) streaming overlay.
+A transparent overlay for Teamfight Tactics that tracks recent placements and current rank. Inspired by [tracker.gg](https://tracker.gg/overlays) streaming overlay.
 
 ## Installation
 - Go to [Releases](https://github.com/chidera-nwankwo/tftoverlay/releases)
